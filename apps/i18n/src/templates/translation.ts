@@ -10,7 +10,7 @@ interface TranslationFn {
 }
 
 export const translationFile = ({ languages }: TranslationProps): Map<string, string> => {
-  const baseTranslationFile = `import { getCurrentLanguage } from '../';
+  const baseTranslationFile = `import { getCurrentLanguage } from '../core';
 
 `;
 
@@ -48,7 +48,7 @@ export const translationFile = ({ languages }: TranslationProps): Map<string, st
 
       let fileContent = translationFiles.get(key) ?? '';
 
-      fileContent += ` * ${language}: ${translation}
+      fileContent += ` * @${language} ${translation}
 `;
      
       translationFiles.set(key, fileContent);
@@ -75,14 +75,13 @@ export const translationFile = ({ languages }: TranslationProps): Map<string, st
 
     const translationFnsContent = translationFns.map(fn => `const ${fn.fnName} = (${fn.fnParams ? `{ ${fn.fnParams} } : { ${fn.fnParamsTypes} }` : ''}) => ${fn.fnBody}`).join('\n\n');
 
-    let translationContent = `${baseTranslationFile}${translationFnsContent}\n\n/**\n${fileContent} `;
+    let translationContent = `${baseTranslationFile}${translationFnsContent}\n\n`;
 
     if (!translationContent) {
       throw new Error(`Translation content for key ${key} is undefined`);
     }
 
-    translationContent += `*/
-export const ${key} = (inputs: { ${translationTypesAsArray.map(type => `${type}: string`).join(', ')} }, locale?: string) => {
+    translationContent += `export const ${key} = (inputs: ${translationTypesAsArray.length > 0 ? `{ ${translationTypesAsArray.map(type => `${type}: string }`).join(', ')}` : '{} = {}'}, locale?: string) => {
   const _locale = locale ?? getCurrentLanguage();
 
   ${translationFns.map(fn => `if (_locale === '${fn.fnName}') return ${fn.fnName}(${fn.fnParams ? 'inputs' : ''});`).join('\n  ')}
