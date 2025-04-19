@@ -3,11 +3,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-
-interface DeepLConfig {
-	apiKey: string;
-	host?: string;
-}
+import { DeepLConfig, DEFAULT_CONFIG_FILE_NAME, settingsWithDeepLSchema } from '@do-easy-i18n/config';
+import { translateText } from '@do-easy-i18n/translation-utils';
 
 interface DeepLTranslation {
 	detected_source_language: string;
@@ -246,45 +243,27 @@ async function handleDeleteTranslation(key: string, language: string) {
 }
 
 async function translateWithDeepL(text: string, targetLang: string, sourceLang?: string): Promise<string> {
+	const { success } = settingsWithDeepLSchema.safeParse(config); 
+
+	if (!success) {
+		throw new Error(`Error parsing config file`);
+	}
+
 	if (!config) {
-		throw new Error('Configuration not found. Please check your do-easy-i18n.config.json file.');
+		throw new Error(`Configuration not found. Please check your ${DEFAULT_CONFIG_FILE_NAME} file.`);
 	}
 
 	if (!config.deepL) {
-		throw new Error('DeepL configuration not found. Please add "deepL" section to your do-easy-i18n.config.json');
+		throw new Error(`DeepL configuration not found. Please add "deepL" section to your ${DEFAULT_CONFIG_FILE_NAME}`);
 	}
 
 	if (!config.deepL.apiKey) {
-		throw new Error('DeepL API key not configured. Please add "deepL.apiKey" to your do-easy-i18n.config.json');
+		throw new Error(`DeepL API key not configured. Please add "deepL.apiKey" to your ${DEFAULT_CONFIG_FILE_NAME}`);
 	}
 
-	const host = config.deepL.host || 'https://api-free.deepl.com/v2/translate';
-	const apiKey = config.deepL.apiKey;
-	
+	// Use the shared utility
 	try {
-		const response = await fetch(host, {
-			method: 'POST',
-			headers: {
-				'Authorization': `DeepL-Auth-Key ${apiKey}`,
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				text: [text],
-				target_lang: targetLang.toUpperCase(),
-				...(sourceLang && { source_lang: sourceLang.toUpperCase() })
-			})
-		});
-
-		if (!response.ok) {
-			throw new Error(`DeepL API returned status ${response.status}: ${await response.text()}`);
-		}
-
-		const result = await response.json() as DeepLResponse;
-		if (result.translations && result.translations[0]) {
-			return result.translations[0].text;
-		} else {
-			throw new Error('Invalid response from DeepL');
-		}
+		return await translateText(text, targetLang, config.deepL, sourceLang);
 	} catch (error) {
 		if (error instanceof Error) {
 			throw new Error(`Translation failed: ${error.message}`);
@@ -406,7 +385,7 @@ function findConfigFile() {
 	}
 
 	const rootPath = workspaceFolders[0].uri.fsPath;
-	const configFilePath = path.join(rootPath, 'do-easy-i18n.config.json');
+	const configFilePath = path.join(rootPath, DEFAULT_CONFIG_FILE_NAME);
 
 	if (fs.existsSync(configFilePath)) {
 		configPath = configFilePath;
@@ -491,6 +470,7 @@ function createHoverMessage(key: string, translations: TranslationInfo): vscode.
 		} else {
 			markdown.appendMarkdown(
 				`*${lang}*: <missing translation> ` +
+				`[$(edit)](command:do-easy-i18n.editTranslation?${encodeURIComponent(JSON.stringify([key, lang]))}) ` +
 				`[$(sparkle)](command:do-easy-i18n.addMissingTranslation?${encodeURIComponent(JSON.stringify([key, lang]))})\n\n`
 			);
 		}
