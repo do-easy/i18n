@@ -2,58 +2,49 @@ import type { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
 import pc from 'picocolors';
-import { settingsWithDeepLSchema } from '../schema/settings';
-import { processLanguage } from '../utils/process-language';
-
-interface DeepLResponse {
-  translations: {
-    detected_source_language: string;
-    text: string;
-  }[];
-}
-
-async function translateText(text: string, targetLang: string, config: { host: string; apiKey: string }) {
-  const response = await fetch(`${config.host}/v2/translate`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `DeepL-Auth-Key ${config.apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      text: [text],
-      target_lang: targetLang.toUpperCase(),
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`DeepL API error: ${response.statusText}`);
-  }
-
-  const data = await response.json() as DeepLResponse;
-  return data.translations[0].text;
-}
+import { DEFAULT_CONFIG_FILE_NAME, loadConfigWithDeepL } from '@do-easy-i18n/config';
+import { processLanguage, writeLanguageFile, translateText } from '@do-easy-i18n/translation-utils';
 
 export const execute = async (configPath: string) => {
   const currentPath = path.dirname(configPath);
   const configFileName = path.basename(configPath);
+  const fullConfigPath = path.join(currentPath, configFileName);
 
-  if (!fs.existsSync(path.join(currentPath, configFileName))) {
+  if (!fs.existsSync(fullConfigPath)) {
     console.error(pc.red(`${configFileName} does not exist`));
-
     return;
   }
 
-  const config = JSON.parse(fs.readFileSync(path.join(currentPath, configFileName), 'utf8')) as Record<string, unknown>;
-
   try {
-    const parsedConfig = settingsWithDeepLSchema.parse(config);
-    const languages = parsedConfig.languages;
-    const languagePath = path.join(currentPath, 'messages');
+    // Use shared config loader with DeepL
+    const configResult = loadConfigWithDeepL(fullConfigPath);
+    
+    if (!configResult.isValid || !configResult.deepL) {
+      console.error(pc.red('Config file is invalid:'));
+      configResult.errors?.forEach(error => {
+        console.log(`- ${error}`);
+      });
+      return;
+    }
+
+    const languages = [...configResult.languages, configResult.defaultLanguage];
+    const languagePath = configResult.messagesPath;
 
     // Load all language translations
     const allTranslations = new Map<string, Map<string, string>>();
     for (const language of languages) {
-      allTranslations.set(language, processLanguage(language, languagePath));
+      try {
+        allTranslations.set(language, processLanguage(language, languagePath));
+      } catch (error) {
+        // Create an empty translation file if it doesn't exist yet
+        if (!fs.existsSync(path.join(languagePath, `${language}.json`))) {
+          writeLanguageFile(language, languagePath, {});
+          allTranslations.set(language, new Map<string, string>());
+        } else {
+          console.error(pc.red(`Error loading ${language} translations: ${error instanceof Error ? error.message : 'Unknown error'}`));
+          return;
+        }
+      }
     }
 
     // Find all unique keys across all language files
@@ -67,7 +58,6 @@ export const execute = async (configPath: string) => {
     // Process each language
     for (const targetLanguage of languages) {
       const targetTranslations = allTranslations.get(targetLanguage) ?? new Map<string, string>();
-      const translationFile = path.join(languagePath, `${targetLanguage}.json`);
       const newTranslations: Record<string, string> = {};
       let hasUpdates = false;
 
@@ -89,7 +79,7 @@ export const execute = async (configPath: string) => {
             if (sourceText) {
               try {
                 console.log(pc.blue(`Translating key "${key}" from ${sourceLanguage} to ${targetLanguage}...\n`));
-                const translatedText = await translateText(sourceText, targetLanguage, parsedConfig.deepL);
+                const translatedText = await translateText(sourceText, targetLanguage, configResult.deepL, sourceLanguage);
                 newTranslations[key] = translatedText;
                 console.log(pc.green(`✓ Translated: ${key}`));
                 hasUpdates = true;
@@ -102,9 +92,9 @@ export const execute = async (configPath: string) => {
         }
       }
 
-      // Only write the file if there were updates or it doesn't exist yet
-      if (hasUpdates || !fs.existsSync(translationFile)) {
-        fs.writeFileSync(translationFile, JSON.stringify(newTranslations, null, 2));
+      // Only write the file if there were updates
+      if (hasUpdates) {
+        writeLanguageFile(targetLanguage, languagePath, newTranslations);
         console.log(pc.green(`\nUpdated translations for ${targetLanguage}\n`));
       } else {
         console.log(pc.yellow(`No new translations needed for ${targetLanguage}`));
@@ -123,7 +113,7 @@ export const translateCommand = (commandInstance: Command) => {
   commandInstance
     .command('translate')
     .description('Translate missing messages using DeepL API.')
-    .option('-c, --config <config>', 'Config path.', './do-easy-i18n.config.json')
+    .option('-c, --config <config>', 'Config path.', `./${DEFAULT_CONFIG_FILE_NAME}.json`)
     .action(async ({ config }: { config: string }) => {
       await execute(config);
     });
