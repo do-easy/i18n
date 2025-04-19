@@ -1,6 +1,6 @@
 import type { Command } from 'commander';
 import pc from 'picocolors';
-import { loadConfig } from '../lib/config/config-loader';
+import { loadConfig, DEFAULT_CONFIG_FILE_NAME } from '@do-easy-i18n/config';
 import { compileFiles } from '../lib/compiler/compiler';
 import { watchFiles } from '../lib/file-watcher/file-watcher';
 
@@ -67,7 +67,7 @@ export const compileCommand = (commandInstance: Command) => {
   commandInstance
     .command('compile')
     .description('Compile the messages.')
-    .option('-c, --config <config>', 'Config path.', './do-easy-i18n.config.json')
+    .option('-c, --config <config>', 'Config path.', `./${DEFAULT_CONFIG_FILE_NAME}`)
     .option('-o, --output <output>', 'Output path.', './dist')
     .option('-w, --watch', 'Watch for changes and recompile automatically', false)
     .action(({ config, output, watch }: { config: string, output: string, watch: boolean }) => {
