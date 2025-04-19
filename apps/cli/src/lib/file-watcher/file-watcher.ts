@@ -1,5 +1,5 @@
-import fs from 'fs';
 import pc from 'picocolors';
+import chokidar, { type FSWatcher } from 'chokidar'
 
 export interface FileWatcherOptions {
   onFileChange: () => void;
@@ -20,16 +20,15 @@ export function watchFiles(
   console.log(pc.blue('👀 Watching for changes...'));
   
   // Watchers array to keep track of all watchers for cleanup
-  const watchers: fs.FSWatcher[] = [];
-  
+  const watchers: FSWatcher[] = [];
+
   // Watch config file
   try {
-    const configWatcher = fs.watch(configFilePath, (eventType) => {
-      if (eventType === 'change') {
-        console.log(pc.blue('🔄 Config file changed'));
-        options.onFileChange();
-      }
+    const configWatcher = chokidar.watch(configFilePath).on('change', (path) => {
+      console.log(pc.blue(`🔄 Config file changed in ${path}`));
+      options.onFileChange();
     });
+    
     watchers.push(configWatcher);
   } catch (_error) {
     console.error(pc.red(`Error watching config file: ${configFilePath}`));
@@ -37,11 +36,9 @@ export function watchFiles(
 
   // Watch messages directory
   try {
-    const messagesWatcher = fs.watch(messagesPath, { recursive: true }, (eventType, filename) => {
-      if (filename?.endsWith('.json')) {
-        console.log(pc.blue(`🔄 Changes detected in ${filename}`));
-        options.onFileChange();
-      }
+    const messagesWatcher = chokidar.watch(messagesPath).on('change', (path ) => {
+      console.log(pc.blue(`🔄 Messages file changed in ${path}`));
+      options.onFileChange();
     });
     watchers.push(messagesWatcher);
   } catch (_error) {

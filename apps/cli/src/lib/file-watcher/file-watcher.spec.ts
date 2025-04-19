@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { watchFiles } from './file-watcher';
 import fs from 'fs';
-import pc from 'picocolors';
 
 // Mock dependencies
 vi.mock('fs');
