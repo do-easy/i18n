@@ -1,3 +1,4 @@
+import { DEFAULT_CONFIG_FILE_NAME } from '@do-easy-i18n/config';
 import type { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
@@ -6,10 +7,8 @@ import pc from 'picocolors';
 export const execute = () => {
   const currentPath = process.cwd();
 
-  const configFileName = 'do-easy-i18n.config.json';
-
-  if (fs.existsSync(path.join(currentPath, configFileName))) {
-    console.log(pc.red('do-easy-i18n.config.json already exists'));
+  if (fs.existsSync(path.join(currentPath, DEFAULT_CONFIG_FILE_NAME))) {
+    console.log(pc.red(`${DEFAULT_CONFIG_FILE_NAME} already exists`));
     
     return;
   }
@@ -23,7 +22,7 @@ export const execute = () => {
     }
   };
   
-  const configPath = path.join(currentPath, configFileName);
+  const configPath = path.join(currentPath, DEFAULT_CONFIG_FILE_NAME);
 
   fs.writeFileSync(configPath, JSON.stringify(initialConfig, null, 2));
 
