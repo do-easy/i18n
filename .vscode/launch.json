@@ -9,16 +9,12 @@
       "name": "Run Extension",
       "type": "extensionHost",
       "request": "launch",
-      "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-extension/do-easy-i18n"
-      ],
-      "outFiles": [
-        "${workspaceFolder}/apps/vscode-extension/do-easy-i18n/dist/**/*.js"
-      ],
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}/apps/extension"],
+      "outFiles": ["${workspaceFolder}/apps/extension/dist/**/*.js"],
       "preLaunchTask": "${defaultBuildTask}",
       "sourceMapRenames": true,
       "sourceMapPathOverrides": {
-        "webpack:*": "${workspaceFolder}/apps/vscode-extension/do-easy-i18n/src/extension.ts"
+        "webpack:*": "${workspaceFolder}/apps/extension/src/extension.ts"
       }
     }
   ]

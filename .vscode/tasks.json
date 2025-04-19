@@ -9,7 +9,7 @@
       "problemMatcher": "$ts-webpack-watch",
       "isBackground": true,
       "options": {
-        "cwd": "${workspaceFolder}/apps/vscode-extension/do-easy-i18n",
+        "cwd": "${workspaceFolder}/apps/extension",
         "shell": {
           "executable": "cmd.exe",
           "args": ["/c"]
