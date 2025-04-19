@@ -1,0 +1,21 @@
+{
+  "name": "@do-easy-i18n/translation-utils",
+  "version": "1.0.0",
+  "description": "Translation utilities for do-easy-i18n",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "zod": "^3.22.0",
+    "picocolors": "^1.0.0",
+    "@do-easy-i18n/config": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}
