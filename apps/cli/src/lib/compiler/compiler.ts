@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import { processLanguage } from '../../utils/process-language';
+import { processLanguage } from '@do-easy-i18n/translation-utils';
 import { translationFile } from '../../templates/translation';
 import { mainFile } from '../../templates/main';
-import type { ConfigResult } from '../config/config-loader';
+import type { ConfigResult } from '@do-easy-i18n/config';
 
 export interface CompileResult {
   success: boolean;
