@@ -17,6 +17,7 @@
     "onLanguage:javascriptreact",
     "onLanguage:typescriptreact"
   ],
+  "icon": "logo-tiny.png",
   "main": "./dist/extension.js",
   "contributes": {},
   "scripts": {
