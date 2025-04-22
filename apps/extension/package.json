@@ -2,10 +2,10 @@
   "name": "do-easy-i18n",
   "displayName": "do-easy-i18n",
   "description": "Easy i18n management for your projects",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "do-easy",
   "engines": {
-    "vscode": "^1.99.0"
+    "vscode": "^1.5.0"
   },
   "categories": [
     "Linters",
