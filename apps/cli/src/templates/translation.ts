@@ -3,6 +3,7 @@ interface TranslationProps {
 }
 
 interface TranslationFn {
+  language: string;
   fnName: string;
   fnParams: string;
   fnParamsTypes: string;
@@ -36,6 +37,7 @@ export const translationFile = ({ languages }: TranslationProps): Map<string, st
       }
 
       const translationFn: TranslationFn = {
+        language,
         fnName: `${language.replace(/-/g, '_')}_${key}`,
         fnParams,
         fnParamsTypes,
@@ -71,6 +73,7 @@ export const translationFile = ({ languages }: TranslationProps): Map<string, st
 
       return acc;
     }, new Set<string>());
+
     const translationTypesAsArray = Array.from(translationTypes);
 
     const translationFnsContent = translationFns.map(fn => `const ${fn.fnName} = (${fn.fnParams ? `{ ${fn.fnParams} } : { ${fn.fnParamsTypes} }` : ''}) => ${fn.fnBody}`).join('\n\n');
@@ -84,7 +87,7 @@ export const translationFile = ({ languages }: TranslationProps): Map<string, st
     translationContent += `export const ${key} = (inputs: ${translationTypesAsArray.length > 0 ? `{ ${translationTypesAsArray.map(type => `${type}: string }`).join(', ')}` : '{} = {}'}, locale?: string) => {
   const _locale = locale ?? getCurrentLanguage();
 
-  ${translationFns.map(fn => `if (_locale === '${fn.fnName}') return ${fn.fnName}(${fn.fnParams ? 'inputs' : ''});`).join('\n  ')}
+  ${translationFns.map(fn => `if (_locale === '${fn.language}') return ${fn.fnName}(${fn.fnParams ? 'inputs' : ''});`).join('\n  ')}
   
   return '${key}';
 };`;
