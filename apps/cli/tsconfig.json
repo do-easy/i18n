@@ -1,11 +1,12 @@
 {
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"],
   "compilerOptions": {
     // Enable latest features
     "lib": ["ESNext", "DOM"],
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
-    "jsx": "react-jsx",
     "allowJs": true,
 
     // Bundler mode

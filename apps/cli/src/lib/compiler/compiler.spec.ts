@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { compileFiles } from './compiler';
 import fs from 'fs';
 import path from 'path';
-import { processLanguage } from '../../utils/process-language';
+import { processLanguage } from '@do-easy-i18n/translation-utils';
 import { translationFile } from '../../templates/translation';
 import { mainFile } from '../../templates/main';
-import type { ConfigResult } from '../config/config-loader';
+import type { ConfigResult } from '@do-easy-i18n/config';
 
 // Mock dependencies
 vi.mock('fs');

@@ -15,4 +15,4 @@ initCommand(program);
 compileCommand(program);
 translateCommand(program);
 
-program.parse();
+program.parse(process.argv);
