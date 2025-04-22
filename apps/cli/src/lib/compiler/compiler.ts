@@ -54,9 +54,18 @@ export function compileFiles(config: ConfigResult, outputPath: string): CompileR
     const translationsFiles = translationFile({
       languages: languagesData
     });
-    
-    fs.mkdirSync(outputPath, { recursive: true });
-    fs.mkdirSync(path.join(outputPath, 'messages'), { recursive: true });
+
+    const outFolderExists = fs.existsSync(outputPath);
+
+    if (!outFolderExists) {
+      fs.mkdirSync(outputPath, { recursive: true });
+    }
+
+    const messagesFolderExists = fs.existsSync(path.join(outputPath, 'messages'));
+
+    if (!messagesFolderExists) {
+      fs.mkdirSync(path.join(outputPath, 'messages'), { recursive: true });
+    }
 
     const mainFileContent = mainFile(defaultLanguage, [defaultLanguage, ...languages]);
     fs.writeFileSync(path.join(outputPath, 'core.ts'), mainFileContent);
