@@ -1,6 +1,6 @@
 {
   "name": "do-easy-i18n",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Do Easy I18n is a tool that helps you manage your translations in your code.",
   "main": "index.js",
   "scripts": {
