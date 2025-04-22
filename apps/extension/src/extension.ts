@@ -703,6 +703,18 @@ async function handleExtractTranslation(
 		return;
 	}
 
+	// Ask for paste format
+	const pasteFormat = await vscode.window.showQuickPick([
+		`${moduleAlias}.${key}()`,
+		`{${moduleAlias}.${key}()}`
+	], {
+		placeHolder: 'Select the paste format'
+	});
+
+	if (!pasteFormat) {
+		return;
+	}
+
 	// Save the translation
 	const messagesDir = getMessagesDir();
 	const langPath = path.join(messagesDir, `${currentLanguage}.json`);
@@ -736,7 +748,7 @@ async function handleExtractTranslation(
 		edit.replace(
 			document.uri,
 			range,
-			`${moduleAlias}.${key}()`
+			pasteFormat
 		);
 		await vscode.workspace.applyEdit(edit);
 
