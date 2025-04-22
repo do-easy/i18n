@@ -11,3 +11,8 @@
 ## 0.0.3
 
 - Add support for Bun
+
+## 0.0.4
+
+- Add validation for duplicate translation keys on extract
+- Add default value for translation keys on extract

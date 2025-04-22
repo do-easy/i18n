@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { DeepLConfig, DEFAULT_CONFIG_FILE_NAME, settingsWithDeepLSchema } from '@do-easy-i18n/config';
 import { translateText } from '@do-easy-i18n/translation-utils';
+import { humanId } from 'human-id';
 
 interface DeepLTranslation {
 	detected_source_language: string;
@@ -688,13 +689,25 @@ async function handleExtractTranslation(
 	const key = await vscode.window.showInputBox({
 		prompt: 'Enter a translation key',
 		placeHolder: 'e.g., welcomeMessage, errorText, etc.',
+		value: humanId({
+			capitalize: false,
+			separator: '_',
+		}),
 		validateInput: (value) => {
 			if (!value) {
 				return 'Translation key cannot be empty';
 			}
+
 			if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(value)) {
 				return 'Translation key must start with a letter and contain only letters, numbers, and underscores';
 			}
+
+			const messageExists = getAllTranslations(value, getMessagesDir())[currentLanguage] !== null;
+
+			if (messageExists) {
+				return 'Translation key already exists';
+			}
+
 			return null;
 		}
 	});
