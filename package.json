@@ -1,7 +1,7 @@
 {
   "name": "do-easy-i18n",
   "version": "1.0.0",
-  "description": "",
+  "description": "Do Easy I18n is a tool that helps you manage your translations in your code.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
