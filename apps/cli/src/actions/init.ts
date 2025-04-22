@@ -13,6 +13,15 @@ export const execute = () => {
     return;
   }
 
+  const messagePath = path.join(currentPath, 'messages');
+  const messagesFolderExists = fs.existsSync(messagePath);
+
+  if (messagesFolderExists) {
+    console.log(pc.red('messages folder already exists'));
+    
+    return;
+  }
+
   const initialConfig = {
     languages: ['en'],
     defaultLanguage: 'en',
@@ -23,10 +32,8 @@ export const execute = () => {
   };
   
   const configPath = path.join(currentPath, DEFAULT_CONFIG_FILE_NAME);
-
+  
   fs.writeFileSync(configPath, JSON.stringify(initialConfig, null, 2));
-
-  const messagePath = path.join(currentPath, 'messages');
 
   fs.mkdirSync(messagePath);
 
