@@ -12,8 +12,8 @@
 - [Installation](#installation)
   - [CLI](#cli)
   - [VSCode Extension](#vscode-extension)
-- [Usage](#usage)
-- [Configuration](#configuration)
+- [Usage](#usage-cli)
+- [Configuration](#configuration-cli)
 - [License](#license)
 
 ## Features
