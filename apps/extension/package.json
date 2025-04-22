@@ -3,6 +3,7 @@
   "displayName": "do-easy-i18n",
   "description": "Easy i18n management for your projects",
   "version": "0.0.1",
+  "publisher": "do-easy",
   "engines": {
     "vscode": "^1.99.0"
   },
