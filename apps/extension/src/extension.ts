@@ -113,7 +113,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	);
 
 	// Find config file when extension activates
-	findConfigFile();
+	await findConfigFile();
 
 	// Create file watcher for config file
 	if (configPath) {
@@ -134,7 +134,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			console.log('Config file deleted');
 			config = null;
 			configPath = null;
-			vscode.window.showWarningMessage('do-easy-i18n configuration file was deleted.');
+			vscode.window.showWarningMessage('do-easy-i18n configuration file not found.');
 		});
 
 		context.subscriptions.push(configWatcher);
@@ -378,19 +378,64 @@ function getMessagesDir(): string {
 	return path.join(path.dirname(configPath), 'messages');
 }
 
-function findConfigFile() {
+async function findConfigFile() {
 	const workspaceFolders = vscode.workspace.workspaceFolders;
 	if (!workspaceFolders) {
+		vscode.window.showErrorMessage('No workspace folder is open');
 		return;
 	}
 
-	const rootPath = workspaceFolders[0].uri.fsPath;
-	const configFilePath = path.join(rootPath, DEFAULT_CONFIG_FILE_NAME);
+	try {
+		// Define common directories to exclude
+		const excludePatterns = [
+			'**/node_modules/**',
+			'**/dist/**',
+			'**/build/**',
+			'**/.git/**',
+			'**/coverage/**'
+		];
 
-	if (fs.existsSync(configFilePath)) {
-		configPath = configFilePath;
+		// Create glob pattern to find config files
+		const configFilePattern = `**/${DEFAULT_CONFIG_FILE_NAME}`;
+		
+		// Find all matching files in the workspace
+		const files = await vscode.workspace.findFiles(
+			configFilePattern,
+			`{${excludePatterns.join(',')}}`
+		);
+
+		if (files.length === 0) {
+			vscode.window.showWarningMessage(`No ${DEFAULT_CONFIG_FILE_NAME} found in the workspace`);
+			return;
+		}
+
+		if (files.length > 1) {
+			// If multiple config files found, let the user choose
+			const fileItems = files.map(file => ({
+				label: vscode.workspace.asRelativePath(file),
+				file
+			}));
+			
+			const selected = await vscode.window.showQuickPick(fileItems, {
+				placeHolder: 'Multiple config files found. Select one to use:'
+			});
+			
+			if (!selected) {
+				return;
+			}
+			
+			configPath = selected.file.fsPath;
+		} else {
+			// Only one config file found
+			configPath = files[0].fsPath;
+		}
+		
 		console.log('Found config file at:', configPath);
 		loadConfig();
+	} catch (error) {
+		if (error instanceof Error) {
+			vscode.window.showErrorMessage(`Error finding config file: ${error.message}`);
+		}
 	}
 }
 
@@ -529,8 +574,6 @@ async function updateDecorations(editor: vscode.TextEditor) {
 		return;
 	}
 
-	// Read config file
-	const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 	const messagesDir = getMessagesDir();
 	const messagesPath = path.join(messagesDir, `${currentLanguage}.json`);
 
