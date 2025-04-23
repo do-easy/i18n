@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/logo.png" alt="do-easy-i18n"/>
+  <img src="logo.png" alt="do-easy-i18n"/>
 
   <p style="text-align:center;">Do easy i18n</p>
 
@@ -119,25 +119,25 @@ The configuration file (`do-easy-i18n.json`) has the following structure:
 
 4. Use a translation and see the magic happen.
 
-![Decoration example](/docs/decoration-example.png)
+![Decoration example](docs/decoration-example.png)
 
 You can switch the decoration language in the status bar.
 
-![Switch decoration language](/docs/switch-language-example.gif)
+![Switch decoration language](docs/switch-language-example.gif)
 
 ### Decoration colors
 
 - Green color: Translation is present in all languages in the do-easy-i18n.json languages array.
 
-![Green color example](/docs/green-example.png)
+![Green color example](docs/green-example.png)
 
 - Yellow color: Translation is present in some languages in the do-easy-i18n.json languages array.
 
-![Yellow color example](/docs/yellow-example.png)
+![Yellow color example](docs/yellow-example.png)
 
 - Red color: Translation is missing in all languages in the do-easy-i18n.json languages array.
 
-![Red color example](/docs/red-example.png)
+![Red color example](docs/red-example.png)
 
 ### Extension features
 
@@ -145,19 +145,19 @@ With the extension, you can:
 
 - Add a translation key to the current file:
 
-![Code actions example](/docs/code-actions-add-example.gif)
+![Code actions example](docs/code-actions-add-example.gif)
 
 - Edit a translation key:
 
-![Code actions example](/docs/code-actions-edit-example.gif)
+![Code actions example](docs/code-actions-edit-example.gif)
 
 - Delete a translation key:
 
-![Code actions example](/docs/code-actions-delete-example.gif)
+![Code actions example](docs/code-actions-delete-example.gif)
 
 - Translate a missing translation key using DeepL:
 
-![Code actions example](/docs/code-actions-translate-example.gif)
+![Code actions example](docs/code-actions-translate-example.gif)
 
 - The extension will use the `defaultLanguage` to translate missing translations. If the default language has no source translation, the extension will fallback to the first language in the `languages` array.
 
