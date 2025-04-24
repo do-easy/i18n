@@ -677,12 +677,11 @@ async function handleExtractTranslation(
 
 	// If no import found, add one at the top of the file
 	if (!moduleAlias) {
-		moduleAlias = 'm';
-		importPath = './messages';
-		const importStatement = `import * as ${moduleAlias} from '${importPath}';\n`;
-		const edit = new vscode.WorkspaceEdit();
-		edit.insert(document.uri, new vscode.Position(0, 0), importStatement);
-		await vscode.workspace.applyEdit(edit);
+		vscode.window.showErrorMessage(
+			`Module import not found. Please add an import statement to the file following the format: import * as ...;`
+		);
+
+		return;
 	}
 
 	// Ask for the translation key

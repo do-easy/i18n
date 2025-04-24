@@ -24,3 +24,7 @@
 ## 0.0.7
 
 - Bump version to 0.0.7
+
+## 0.0.76
+
+- Fix a bug that import module incorrectly when extract translation
