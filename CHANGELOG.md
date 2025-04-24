@@ -20,3 +20,7 @@
 ## 0.0.5
 
 - Fix a bug that fail translation with DeepL integration when source language has a hyphen
+
+## 0.0.7
+
+- Bump version to 0.0.7
