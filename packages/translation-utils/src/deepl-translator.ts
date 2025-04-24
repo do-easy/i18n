@@ -29,7 +29,7 @@ export async function translateText(
   };
   
   if (sourceLang) {
-    requestBody.source_lang = sourceLang.toUpperCase();
+    requestBody.source_lang = sourceLang.toUpperCase().split('-')[0];
   }
 
   const response = await fetch(`${config.host}/v2/translate`, {

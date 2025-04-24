@@ -16,3 +16,7 @@
 
 - Add validation for duplicate translation keys on extract
 - Add default value for translation keys on extract
+
+## 0.0.5
+
+- Fix a bug that fail translation with DeepL integration when source language has a hyphen
