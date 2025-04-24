@@ -113,7 +113,7 @@ export const translateCommand = (commandInstance: Command) => {
   commandInstance
     .command('translate')
     .description('Translate missing messages using DeepL API.')
-    .option('-c, --config <config>', 'Config path.', `./${DEFAULT_CONFIG_FILE_NAME}.json`)
+    .option('-c, --config <config>', 'Config path.', `./${DEFAULT_CONFIG_FILE_NAME}`)
     .action(async ({ config }: { config: string }) => {
       await execute(config);
     });
