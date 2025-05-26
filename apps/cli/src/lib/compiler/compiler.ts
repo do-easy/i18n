@@ -70,11 +70,11 @@ export function compileFiles(config: ConfigResult, outputPath: string): CompileR
     const mainFileContent = mainFile(defaultLanguage, [defaultLanguage, ...languages]);
     fs.writeFileSync(path.join(outputPath, 'core.ts'), mainFileContent);
 
-    let indexFileContent = '';
+    let indexFileContent = `// do-easy-i18n\n`;
 
     for (const [key, content] of translationsFiles.entries()) {
       indexFileContent += `export * from './messages/${key}';\n`;
-      fs.writeFileSync(path.join(outputPath, 'messages', `${key}.ts`), content);
+      fs.writeFileSync(path.join(outputPath, 'messages', `${key}.ts`), `// do-easy-i18n\n${content}`);
     }
 
     fs.writeFileSync(path.join(outputPath, 'index.ts'), indexFileContent);
