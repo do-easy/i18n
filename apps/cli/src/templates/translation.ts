@@ -10,6 +10,17 @@ interface TranslationFn {
   fnBody: string;
 }
 
+function replaceBraces(input: string) {
+  return input.replace(/{{[^}]*}}|{([^}]+)}/g, (match: string, group1: string) => {
+    // If group1 is undefined, it means the match was double braces, so return as is
+    if (group1 === undefined) {
+      return match;
+    }
+    // Otherwise, single braces - replace with ${...}
+    return `\${${group1}}`;
+  });
+}
+
 export const translationFile = ({ languages }: TranslationProps): Map<string, string> => {
   const baseTranslationFile = `import { getCurrentLanguage } from '../core';
 
@@ -22,13 +33,18 @@ export const translationFile = ({ languages }: TranslationProps): Map<string, st
 
   for (const [language, translations] of languages.entries()) {
     for (const [key, translation] of translations.entries()) {
-      const translationInputs = translation.matchAll(/(\{\{\s*[^}]*\s*\}\})/g);
+      const translationInputs = translation.matchAll(/\{([^{}]+)\}/g).filter(match => {
+        // Skip matches that are part of double curly braces like {{example}}
+        const startIndex = match.index ?? 0;
+        return !(startIndex > 0 && translation[startIndex - 1] === '{' && 
+                translation[startIndex + match[0].length] === '}');
+      });
       let fnParams = '';
       let fnParamsTypes = '';
 
       for (const input of translationInputs) {
-        fnParams += `${input[1].replace(/\{\{|\}\}/g, '').trim()}, `;
-        fnParamsTypes += `${input[1].replace(/\{\{|\}\}/g, '').trim()}: string, `;
+        fnParams += `${input[1].replace(/\{|\}/g, '').trim()}, `;
+        fnParamsTypes += `${input[1].replace(/\{|\}/g, '').trim()}: string, `;
       }
 
       if (fnParams.endsWith(', ')) {
@@ -41,7 +57,7 @@ export const translationFile = ({ languages }: TranslationProps): Map<string, st
         fnName: `${language.replace(/-/g, '_')}_${key}`,
         fnParams,
         fnParamsTypes,
-        fnBody: `\`${translation.replace(/\{\{/g, '${').replace(/\}\}/g, '}').replace(/"/g, '\\"')}\``
+        fnBody: `\`${replaceBraces(translation).replace(/"/g, '\\"')}\``
       };
 
       const currentTranslationFns = translationsFns.get(key) ?? [];
@@ -84,7 +100,7 @@ export const translationFile = ({ languages }: TranslationProps): Map<string, st
       throw new Error(`Translation content for key ${key} is undefined`);
     }
 
-    translationContent += `export const ${key} = (inputs: ${translationTypesAsArray.length > 0 ? `{ ${translationTypesAsArray.map(type => `${type}: string }`).join(', ')}` : '{} = {}'}, locale?: string) => {
+    translationContent += `export const ${key} = (inputs: ${translationTypesAsArray.length > 0 ? `{ ${translationTypesAsArray.map(type => `${type}: string`).join(', ')} }` : '{} = {}'}, locale?: string) => {
   const _locale = locale ?? getCurrentLanguage();
 
   ${translationFns.map(fn => `if (_locale === '${fn.language}') return ${fn.fnName}(${fn.fnParams ? 'inputs' : ''});`).join('\n  ')}
