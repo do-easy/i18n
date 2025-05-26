@@ -22,6 +22,45 @@
       "group": {
         "kind": "build",
         "isDefault": true
+      },
+      "dependsOn": ["config: watch", "translation-utils: watch"]
+    },
+    {
+      "label": "config: watch",
+      "script": "dev",
+      "type": "npm",
+      "path": "packages/config",
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "never",
+        "group": "watchers"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/packages/config",
+        "shell": {
+          "executable": "cmd.exe",
+          "args": ["/c"]
+        }
+      }
+    },
+    {
+      "label": "translation-utils: watch",
+      "script": "dev",
+      "type": "npm",
+      "path": "packages/translation-utils",
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "never",
+        "group": "watchers"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/packages/translation-utils",
+        "shell": {
+          "executable": "cmd.exe",
+          "args": ["/c"]
+        }
       }
     },
     {
