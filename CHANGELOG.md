@@ -28,3 +28,9 @@
 ## 0.0.76
 
 - Fix a bug that import module incorrectly when extract translation
+
+## 0.0.8
+
+- Fix a bug that translation function parameters are not correctly parsed
+- Improve extract translation algorithm
+- Improve translations decorations algorithm
