@@ -59,12 +59,8 @@ class TranslationActionProvider implements vscode.CodeActionProvider {
     }
 
     const selectedText = document.getText(range).trim();
-    const isBetweenQuotes =
-      (selectedText.startsWith('"') && selectedText.endsWith('"')) ||
-      (selectedText.startsWith("'") && selectedText.endsWith("'")) ||
-      (selectedText.startsWith("`") && selectedText.endsWith("`"));
 
-    if (!selectedText || !isBetweenQuotes) {
+    if (!selectedText) {
       return [];
     }
 
@@ -189,9 +185,11 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   // Update decorations in the active editor
-  if (vscode.window.activeTextEditor) {
-    updateDecorations(vscode.window.activeTextEditor);
-  }
+  setTimeout(() => {
+    if (vscode.window.activeTextEditor) {
+      updateDecorations(vscode.window.activeTextEditor);
+    }
+  }, 1000);
 }
 
 async function handleLanguageSelection() {
@@ -930,6 +928,7 @@ async function handleExtractTranslation(
 
   let moduleAlias: string | undefined;
   let importPath: string | undefined;
+  let hasAddedImport: boolean = false;
 
   // Verify if the import already exists in the file, if exists use it, otherwise put the import at the top of the file
   if (lastI18nImport && document.getText().includes(lastI18nImport)) {
@@ -988,6 +987,8 @@ async function handleExtractTranslation(
         return;
       }
     }
+
+    hasAddedImport = true;
   }
 
   // Ask for paste format
@@ -1031,18 +1032,31 @@ async function handleExtractTranslation(
     messages[key] = cleanText;
     fs.writeFileSync(langPath, JSON.stringify(messages, null, 2));
 
+
     // Add the import to the file
-    const importEdit = new vscode.WorkspaceEdit();
-    importEdit.insert(
-      document.uri,
-      new vscode.Position(0, 0),
-      `import * as ${moduleAlias} from "${lastI18nImport}";\n`
-    );
-    await vscode.workspace.applyEdit(importEdit);
+    if (hasAddedImport) {
+      const importEdit = new vscode.WorkspaceEdit();
+      importEdit.insert(
+        document.uri,
+        new vscode.Position(0, 0),
+        `import * as ${moduleAlias} from "${lastI18nImport}";\n`
+      );
+      await vscode.workspace.applyEdit(importEdit);
+    }
 
     // Replace selected text with translation key call
     const translationKeyEdit = new vscode.WorkspaceEdit();
-    translationKeyEdit.replace(document.uri, range, pasteFormat);
+    let updatedRange = hasAddedImport ? new vscode.Range(range.start.line + 1, range.start.character, range.end.line + 1, range.end.character) : range;
+    // Get past location content to search for quotes before and after the text. If it has, then we need to remove the quotes.
+    const textBefore = document.getText(new vscode.Range(updatedRange.start.line, updatedRange.start.character - 1, updatedRange.start.line, updatedRange.start.character));
+    const textAfter = document.getText(new vscode.Range(updatedRange.end.line, updatedRange.end.character, updatedRange.end.line, updatedRange.end.character + 1));
+
+    // Remove quotes if they exist
+    if (textBefore.includes('"') && textAfter.includes('"') || textBefore.includes("'") && textAfter.includes("'")) {
+      updatedRange = new vscode.Range(updatedRange.start.line, updatedRange.start.character - 1, updatedRange.end.line, updatedRange.end.character + 1);
+    }
+
+    translationKeyEdit.replace(document.uri, updatedRange, pasteFormat);
     await vscode.workspace.applyEdit(translationKeyEdit);
 
     // Update decorations

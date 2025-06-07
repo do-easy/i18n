@@ -34,3 +34,8 @@
 - Fix a bug that translation function parameters are not correctly parsed
 - Improve extract translation algorithm
 - Improve translations decorations algorithm
+
+## 0.1.0
+
+- When import path and alias cannot be identified, spawn a prompt to select them manually on Extract Translation action
+- Fix a bug that quotes are not removed from the translation key
