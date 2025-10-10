@@ -80,6 +80,9 @@ export const execute = async (configPath: string) => {
               try {
                 console.log(pc.blue(`Translating key "${key}" from ${sourceLanguage} to ${targetLanguage}...\n`));
                 const translatedText = await translateText(sourceText, targetLanguage, configResult.deepL, sourceLanguage);
+                // Wait for 1 second to avoid rate limiting
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                await new Promise(resolve => setTimeout(resolve, configResult.deepL?.requestDelay ?? 1000));
                 newTranslations[key] = translatedText;
                 console.log(pc.green(`✓ Translated: ${key}`));
                 hasUpdates = true;

@@ -27,6 +27,9 @@ export const deepLConfigSchema = z.object({
   apiKey: z.string().min(1, {
     message: 'DeepL API key is required',
   }),
+  requestDelay: z.number().min(0, {
+    message: 'DeepL request delay must be greater than 0',
+  }).default(1000),
 });
 
 export const settingsWithDeepLSchema = baseSettingsSchema.extend({
