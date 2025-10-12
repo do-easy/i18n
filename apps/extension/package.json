@@ -1,16 +1,38 @@
 {
   "name": "do-easy-i18n",
-  "displayName": "do-easy-i18n",
-  "description": "Easy i18n management for your projects",
-  "version": "0.1.3",
+  "displayName": "Do Easy I18n - Internationalization Manager",
+  "description": "🚀 Complete i18n solution with inline translations, AI-powered DeepL integration, and TypeScript support. Visualize, edit, and translate your app messages directly in VS Code.",
+  "version": "0.1.4",
   "publisher": "do-easy",
+  "license": "MIT",
+  "author": {
+    "name": "Do Easy Team",
+    "email": "diego@mutualtecnologia.com.br"
+  },
   "engines": {
     "vscode": "^1.5.0"
   },
+  "preview": false,
+  "qna": "https://github.com/do-easy/i18n/discussions",
+  "keywords": [
+    "i18n",
+    "internationalization",
+    "localization",
+    "translation",
+    "multilingual",
+    "typescript",
+    "javascript",
+    "deepl",
+    "ai-translation",
+    "inline-translations",
+    "translation-management",
+    "language-switching",
+    "translation-visualization"
+  ],
   "categories": [
-    "Linters",
-    "Formatters",
-    "Other"
+    "Other",
+    "Language Packs",
+    "Snippets"
   ],
   "activationEvents": [
     "onLanguage:javascript",
@@ -18,14 +40,75 @@
     "onLanguage:javascriptreact",
     "onLanguage:typescriptreact"
   ],
+  "homepage": "https://github.com/do-easy/i18n",
   "repository": {
     "type": "git",
     "url": "https://github.com/do-easy/i18n",
     "directory": "apps/extension"
   },
+  "bugs": {
+    "url": "https://github.com/do-easy/i18n/issues"
+  },
   "icon": "logo-tiny.png",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
   "main": "./dist/extension.js",
-  "contributes": {},
+  "contributes": {
+    "commands": [
+      {
+        "command": "do-easy-i18n.selectLanguage",
+        "title": "Switch Display Language",
+        "category": "Do Easy I18n"
+      },
+      {
+        "command": "do-easy-i18n.editTranslation",
+        "title": "Edit Translation Key",
+        "category": "Do Easy I18n"
+      },
+      {
+        "command": "do-easy-i18n.addMissingTranslation",
+        "title": "Add Missing Translation (DeepL)",
+        "category": "Do Easy I18n"
+      },
+      {
+        "command": "do-easy-i18n.deleteTranslation",
+        "title": "Delete Translation Key",
+        "category": "Do Easy I18n"
+      },
+      {
+        "command": "do-easy-i18n.extractTranslation",
+        "title": "Extract Text to Translation Key",
+        "category": "Do Easy I18n"
+      },
+      {
+        "command": "do-easy-i18n.reloadSettings",
+        "title": "Reload Settings",
+        "category": "Do Easy I18n"
+      }
+    ],
+    "configuration": {
+      "title": "Do Easy I18n",
+      "properties": {
+        "do-easy-i18n.showInlineTranslations": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show inline translation decorations in the editor"
+        },
+        "do-easy-i18n.defaultDisplayLanguage": {
+          "type": "string",
+          "default": "en",
+          "description": "Default language for inline translation display"
+        },
+        "do-easy-i18n.decorationDelay": {
+          "type": "number",
+          "default": 300,
+          "description": "Delay in milliseconds before updating decorations after text changes"
+        }
+      }
+    }
+  },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
     "compile": "webpack",

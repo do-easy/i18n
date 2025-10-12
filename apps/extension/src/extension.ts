@@ -27,6 +27,10 @@ let config: Config | null = null;
 let configWatcher: vscode.FileSystemWatcher | null = null;
 let lastI18nImport: string | undefined;
 
+// VS Code settings
+let showInlineTranslations: boolean = true;
+let decorationDelay: number = 300;
+
 interface I18nStatement {
   i18nKey: string
   range: vscode.Range
@@ -79,10 +83,26 @@ class TranslationActionProvider implements vscode.CodeActionProvider {
   }
 }
 
+// Load VS Code settings
+function loadVSCodeSettings() {
+  const settings = vscode.workspace.getConfiguration('do-easy-i18n');
+  showInlineTranslations = settings.get('showInlineTranslations', true);
+  decorationDelay = settings.get('decorationDelay', 300);
+  
+  // Get default display language
+  const defaultDisplayLanguage = settings.get('defaultDisplayLanguage', 'en');
+  if (defaultDisplayLanguage && defaultDisplayLanguage !== currentLanguage) {
+    currentLanguage = defaultDisplayLanguage;
+  }
+}
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   console.log("do-easy-i18n extension is now active!");
+
+  // Load VS Code settings
+  loadVSCodeSettings();
 
   // Create decoration type for translations
   decorationType = vscode.window.createTextEditorDecorationType({
@@ -129,6 +149,10 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       "do-easy-i18n.extractTranslation",
       handleExtractTranslation
+    ),
+    vscode.commands.registerCommand(
+      "do-easy-i18n.reloadSettings",
+      handleReloadSettings
     )
   );
 
@@ -179,7 +203,20 @@ export async function activate(context: vscode.ExtensionContext) {
         }
         debounceTimer = setTimeout(() => {
           updateDecorations(editor);
-        }, 300); // Wait 300ms after last change before updating
+        }, decorationDelay); // Use setting for delay
+      }
+    }),
+    // Listen for configuration changes
+    vscode.workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration('do-easy-i18n')) {
+        console.log('do-easy-i18n configuration changed, reloading settings...');
+        loadVSCodeSettings();
+        
+        // Update decorations if inline translations setting changed
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+          updateDecorations(editor);
+        }
       }
     })
   );
@@ -204,6 +241,22 @@ async function handleLanguageSelection() {
       updateDecorations(editor);
     }
   }
+}
+
+async function handleReloadSettings() {
+  console.log("Reloading do-easy-i18n settings...");
+  loadVSCodeSettings();
+  
+  // Re-find config file in case the path changed
+  await findConfigFile();
+  
+  // Update decorations
+  const editor = vscode.window.activeTextEditor;
+  if (editor) {
+    updateDecorations(editor);
+  }
+  
+  vscode.window.showInformationMessage("Do Easy I18n settings reloaded successfully!");
 }
 
 async function handleTranslationEdit(key: string, language: string) {
@@ -676,7 +729,11 @@ function getI18nStatement(
 }
 
 async function updateDecorations(editor: vscode.TextEditor) {
-  if (!configPath) {
+  if (!configPath || !showInlineTranslations) {
+    // Clear decorations if inline translations are disabled
+    if (!showInlineTranslations) {
+      editor.setDecorations(decorationType, []);
+    }
     return;
   }
 
