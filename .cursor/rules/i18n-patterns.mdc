@@ -1,0 +1,83 @@
+---
+description: Guidelines for i18n implementation and translation management
+---
+
+# Internationalization Patterns
+
+## Translation File Structure
+
+Translation files are stored as JSON in a `messages/` directory:
+
+- `en.json` - Default language (English)
+- `pt-BR.json` - Portuguese (Brazil)
+- `fr.json` - French
+- etc.
+
+## Configuration Schema
+
+The `do-easy-i18n.config.json` file follows this structure:
+
+```json
+{
+  "languages": ["en", "pt-BR", "fr"],
+  "defaultLanguage": "en",
+  "deepL": {
+    "host": "https://api-free.deepl.com",
+    "apiKey": "your-api-key",
+    "requestDelay": 1000
+  }
+}
+```
+
+**Note**: The `deepL.apiKey` is optional. If not provided in the configuration file, the tool will look for the `D18N_DEEPL_API_KEY` environment variable.
+
+## Translation Key Patterns
+
+### Naming Convention
+
+- Use **snake_case** for translation keys
+- Be **descriptive** and **hierarchical** when possible
+- Examples: `welcome_message`, `error_validation_required`, `button_save`
+
+### Key Structure
+
+- **Group related keys** logically
+- Use **consistent prefixes** for similar content types
+- Avoid **deep nesting** in key names
+
+## Code Integration
+
+### Import Patterns
+
+```typescript
+// Namespace import (recommended)
+import * as i18n from "do-easy-i18n"
+const message = i18n.welcome_message()
+
+// Named import
+import { welcome_message } from "do-easy-i18n"
+const message = welcome_message()
+```
+
+### Usage in Components
+
+- Use **function calls** for dynamic content
+- Provide **fallback values** when translations are missing
+- Handle **pluralization** appropriately
+- Consider **context** for ambiguous translations
+
+## Translation Workflow
+
+1. **Extract** hardcoded strings to translation keys
+2. **Translate** using DeepL or manual translation
+3. **Validate** translations for accuracy and context
+4. **Test** in different languages to ensure proper display
+5. **Maintain** translation files as content evolves
+
+## Best Practices
+
+- **Never hardcode** user-facing strings
+- **Use consistent terminology** across translations
+- **Test with different text lengths** (some languages are longer)
+- **Consider cultural context** beyond just language translation
+- **Keep translation files organized** and well-structured

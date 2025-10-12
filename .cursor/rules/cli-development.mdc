@@ -1,0 +1,41 @@
+---
+globs: apps/cli/**/*.ts
+---
+
+# CLI Development Guidelines
+
+## Architecture
+
+The CLI follows a command-based architecture using Commander.js:
+
+- [apps/cli/src/index.ts](mdc:apps/cli/src/index.ts) - Main entry point with command registration
+- [apps/cli/src/actions/](mdc:apps/cli/src/actions/) - Individual command implementations
+- [apps/cli/src/lib/](mdc:apps/cli/src/lib/) - Core functionality (compiler, file watcher)
+
+## Command Structure
+
+Each command should:
+
+- Be defined in its own file under `src/actions/`
+- Export a function that takes a `Command` instance
+- Use proper error handling and user feedback
+- Support both direct execution and programmatic usage
+
+## File Watching
+
+- Use [chokidar](mdc:apps/cli/src/lib/file-watcher/) for file system watching
+- Implement debouncing for performance
+- Handle file system errors gracefully
+
+## Compilation
+
+- The compiler generates TypeScript files from JSON translation files
+- Output files should be properly typed and formatted
+- Support for watch mode with incremental compilation
+
+## Testing
+
+- Use **Vitest** for unit testing
+- Test files should be in `__tests__/` directories
+- Mock external dependencies appropriately
+- Test both success and error scenarios

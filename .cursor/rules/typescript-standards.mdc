@@ -1,0 +1,39 @@
+---
+globs: *.ts,*.tsx
+---
+
+# TypeScript Development Standards
+
+## Code Style
+
+- Use **single quotes** for strings
+- Use **semicolons** at the end of statements
+- Use **2 spaces** for indentation
+- Use **strict TypeScript** configuration with latest features
+
+## Import/Export Patterns
+
+- Use **named exports** for utilities and functions
+- Use **default exports** sparingly, mainly for main entry points
+- Group imports: external packages first, then internal modules
+- Use **workspace references** for internal packages: `@do-easy-i18n/config`, `@do-easy-i18n/translation-utils`
+
+## Error Handling
+
+- Use **proper error types** and avoid `any`
+- Handle **async operations** with proper error catching
+- Use **Zod schemas** for runtime validation (see [packages/config/src/schema.ts](mdc:packages/config/src/schema.ts))
+- Prefix unused variables with `_` to avoid linting warnings
+
+## Type Safety
+
+- Prefer **explicit types** over type inference for public APIs
+- Use **strict null checks** and handle undefined cases
+- Leverage **TypeScript's strict mode** features
+- Use **interface** for object shapes, **type** for unions/primitives
+
+## Async/Await
+
+- Always handle **floating promises** with proper error handling
+- Use **async/await** over Promise chains for readability
+- Handle **timeout scenarios** in long-running operations

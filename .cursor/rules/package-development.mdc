@@ -1,0 +1,51 @@
+---
+globs: packages/**/*.ts
+---
+
+# Shared Package Development
+
+## Package Structure
+
+### Config Package ([packages/config/](mdc:packages/config/))
+
+- **Schema validation** using Zod for configuration files
+- **Type-safe configuration** loading and validation
+- **Default values** and validation rules
+- Export types for use in other packages
+
+### Translation Utils ([packages/translation-utils/](mdc:packages/translation-utils/))
+
+- **DeepL integration** for automatic translations
+- **Language processing** utilities
+- **Translation request handling** with proper error management
+- **Rate limiting** and request delay management
+
+## Development Guidelines
+
+### API Design
+
+- Design **stable public APIs** that won't break between versions
+- Use **semantic versioning** for package updates
+- Provide **clear TypeScript types** for all exports
+- Include **JSDoc comments** for public APIs
+
+### Error Handling
+
+- Use **Zod schemas** for runtime validation
+- Provide **descriptive error messages** with context
+- Handle **network errors** gracefully in translation utilities
+- Implement **proper retry logic** for external API calls
+
+### Dependencies
+
+- Keep **dependencies minimal** and well-maintained
+- Use **peer dependencies** for shared libraries
+- Avoid **circular dependencies** between packages
+- Prefer **workspace references** over published packages for internal code
+
+### Testing
+
+- Write **comprehensive unit tests** for all public APIs
+- Test **error scenarios** and edge cases
+- Mock **external dependencies** appropriately
+- Ensure **backward compatibility** in tests

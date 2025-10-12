@@ -1,0 +1,35 @@
+---
+alwaysApply: true
+---
+
+# Do Easy I18n Project Structure
+
+This is a monorepo for the Do Easy I18n tool, which provides both a CLI and VSCode extension for internationalization management.
+
+## Project Layout
+
+- **Root**: [package.json](mdc:package.json) - Main workspace configuration
+- **Apps**:
+  - [apps/cli/](mdc:apps/cli/) - Command-line interface tool
+  - [apps/extension/](mdc:apps/extension/) - VSCode extension
+- **Packages**:
+  - [packages/config/](mdc:packages/config/) - Configuration schema and loader
+  - [packages/translation-utils/](mdc:packages/translation-utils/) - Translation utilities including DeepL integration
+
+## Key Files
+
+- [pnpm-workspace.yaml](mdc:pnpm-workspace.yaml) - Monorepo workspace configuration
+- [apps/cli/src/index.ts](mdc:apps/cli/src/index.ts) - CLI entry point
+- [apps/extension/src/extension.ts](mdc:apps/extension/src/extension.ts) - VSCode extension entry point
+- [packages/config/src/schema.ts](mdc:packages/config/src/schema.ts) - Configuration validation schemas
+
+## Development Commands
+
+- `pnpm build:packages` - Build shared packages
+- `pnpm build:apps` - Build applications
+- `pnpm build` - Build everything
+- `pnpm dev` - Development mode (in individual packages)
+
+## Configuration
+
+The tool uses `do-easy-i18n.config.json` configuration files with language settings and optional DeepL integration for automatic translations.

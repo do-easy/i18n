@@ -1,0 +1,90 @@
+---
+description: Build, testing, and deployment guidelines
+---
+
+# Build and Deployment
+
+## Build System
+
+### Monorepo Management
+
+- Use **pnpm workspaces** for dependency management
+- Build **packages first**, then **apps** that depend on them
+- Use **workspace references** (`workspace:*`) for internal dependencies
+
+### Build Commands
+
+```bash
+# Build shared packages
+pnpm build:packages
+
+# Build applications
+pnpm build:apps
+
+# Build everything
+pnpm build
+```
+
+### Individual Package Builds
+
+- **CLI**: Uses `tsup` for bundling with Node.js target
+- **Extension**: Uses `webpack` for VSCode extension bundling
+- **Packages**: Use `tsc` for TypeScript compilation
+
+## Development Workflow
+
+### Local Development
+
+- Use `pnpm dev` in individual packages for watch mode
+- **CLI**: `tsx watch` for TypeScript execution
+- **Extension**: `webpack --watch` for development builds
+
+### Testing Strategy
+
+- **Unit tests**: Vitest for CLI and packages
+- **Extension tests**: VSCode test framework
+- **Integration tests**: End-to-end translation workflows
+- **Linting**: ESLint with TypeScript rules
+
+## Code Quality
+
+### Linting and Formatting
+
+- **ESLint**: TypeScript strict rules with Prettier integration
+- **Prettier**: Consistent code formatting
+- **TypeScript**: Strict mode with latest features
+- **Pre-commit hooks**: Lint and format before commits
+
+### Error Handling
+
+- Use **proper error types** and avoid `any`
+- Handle **async operations** with proper error catching
+- Provide **user-friendly error messages**
+- Log **detailed errors** for debugging
+
+## Deployment
+
+### CLI Package
+
+- Published to **npm** as `do-easy-i18n`
+- Binary entry point in `package.json`
+- Includes only `dist/` directory in published package
+
+### VSCode Extension
+
+- Published to **VSCode Marketplace**
+- Uses `vsce` for packaging
+- Includes proper extension metadata and icons
+
+### Version Management
+
+- Use **semantic versioning** (semver)
+- Update **CHANGELOG.md** for each release
+- Tag releases in Git for tracking
+
+## Performance Considerations
+
+- **Bundle size**: Keep CLI and extension bundles minimal
+- **Startup time**: Optimize extension activation
+- **Memory usage**: Proper cleanup and disposal
+- **File watching**: Efficient change detection

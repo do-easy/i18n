@@ -1,0 +1,61 @@
+---
+globs: apps/extension/**/*.ts
+---
+
+# VSCode Extension Development
+
+## Extension Architecture
+
+The extension provides inline translation visualization and management:
+
+- [apps/extension/src/extension.ts](mdc:apps/extension/src/extension.ts) - Main extension logic
+- Uses **TypeScript compiler API** for parsing and analyzing code
+- Implements **decoration providers** for inline translation display
+- Provides **code actions** for translation management
+
+## Key Features
+
+### Translation Decorations
+
+- **Green**: Translation present in all languages
+- **Yellow**: Translation present in some languages
+- **Red**: Translation missing in all languages
+
+### Code Actions
+
+- Extract text to translation key
+- Edit existing translations
+- Delete translations
+- Auto-translate using DeepL
+
+### Configuration
+
+- Automatically finds `do-easy-i18n.config.json` files
+- Watches for configuration changes
+- Supports multiple config files in workspace
+
+## Development Patterns
+
+### File System Operations
+
+- Use **VSCode's file system API** when possible
+- Handle file system errors gracefully
+- Implement proper cleanup in `deactivate()`
+
+### Performance
+
+- Use **debouncing** for document change events (300ms)
+- Cache parsed TypeScript source files
+- Avoid blocking the main thread with heavy operations
+
+### User Experience
+
+- Provide **clear error messages** with actionable suggestions
+- Use **progress indicators** for long-running operations
+- Implement **proper command registration** and disposal
+
+## Testing
+
+- Use **VSCode test framework** for extension testing
+- Test in different VSCode versions
+- Mock VSCode APIs for unit tests
