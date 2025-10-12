@@ -39,3 +39,8 @@
 
 - When import path and alias cannot be identified, spawn a prompt to select them manually on Extract Translation action
 - Fix a bug that quotes are not removed from the translation key
+
+## 0.1.3
+
+- Add support for DeepL API key in the environment variable
+- Add new auto fill key option on Extract Translation action

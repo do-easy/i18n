@@ -1,6 +1,6 @@
 {
   "name": "@do-easy-i18n/translation-utils",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Translation utilities for do-easy-i18n",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

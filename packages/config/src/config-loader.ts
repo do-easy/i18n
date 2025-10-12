@@ -94,7 +94,16 @@ export function loadConfigWithDeepL(configPath: string): ConfigResult & { deepL?
 
     result.defaultLanguage = parsedConfig.defaultLanguage;
     result.languages = parsedConfig.languages.filter(language => language !== parsedConfig.defaultLanguage);
-    result.deepL = parsedConfig.deepL;
+    
+    // Handle DeepL configuration with environment variable fallback
+    if (parsedConfig.deepL) {
+      result.deepL = {
+        ...parsedConfig.deepL,
+        // Use environment variable if apiKey is not provided in config
+        apiKey: parsedConfig.deepL.apiKey || process.env.D18N_DEEPL_API_KEY || undefined
+      };
+    }
+    
     result.isValid = true;
     
     return result;

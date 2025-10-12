@@ -101,13 +101,15 @@ The configuration file (`do-easy-i18n.json`) has the following structure:
 }
 ```
 
-| Property          | Description                                   |
-| ----------------- | --------------------------------------------- |
-| `languages`       | Array of language codes to support            |
-| `defaultLanguage` | The source language for translations          |
-| `deepL`           | DeepL configuration (optional)                |
-| `deepL.host`      | DeepL API host (free or pro)                  |
-| `deepL.apiKey`    | Your DeepL API key for automatic translations |
+**Note**: The `deepL.apiKey` is optional. If not provided in the configuration file, the tool will look for the `D18N_DEEPL_API_KEY` environment variable.
+
+| Property          | Description                                                                                   |
+| ----------------- | --------------------------------------------------------------------------------------------- |
+| `languages`       | Array of language codes to support                                                            |
+| `defaultLanguage` | The source language for translations                                                          |
+| `deepL`           | DeepL configuration (optional)                                                                |
+| `deepL.host`      | DeepL API host (free or pro)                                                                  |
+| `deepL.apiKey`    | Your DeepL API key for automatic translations (optional - can use D18N_DEEPL_API_KEY env var) |
 
 ## Usage (VSCode Extension)
 

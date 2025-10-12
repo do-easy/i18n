@@ -27,7 +27,6 @@ export const execute = () => {
     defaultLanguage: 'en',
     deepL: {
       host: 'https://api-free.deepl.com',
-      apiKey: '',
     }
   };
   

@@ -27,6 +27,13 @@ export const execute = async (configPath: string) => {
       return;
     }
 
+    // Check if API key is available (either in config or environment variable)
+    const apiKey = configResult.deepL.apiKey ?? process.env.D18N_DEEPL_API_KEY;
+    if (!apiKey) {
+      console.error(pc.red('DeepL API key is required. Please provide it in the configuration file or set the D18N_DEEPL_API_KEY environment variable.'));
+      return;
+    }
+
     const languages = [...configResult.languages, configResult.defaultLanguage];
     const languagePath = configResult.messagesPath;
 
@@ -81,7 +88,7 @@ export const execute = async (configPath: string) => {
                 console.log(pc.blue(`Translating key "${key}" from ${sourceLanguage} to ${targetLanguage}...\n`));
                 const translatedText = await translateText(sourceText, targetLanguage, configResult.deepL, sourceLanguage);
                 // Wait for 1 second to avoid rate limiting
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                 
                 await new Promise(resolve => setTimeout(resolve, configResult.deepL?.requestDelay ?? 1000));
                 newTranslations[key] = translatedText;
                 console.log(pc.green(`✓ Translated: ${key}`));

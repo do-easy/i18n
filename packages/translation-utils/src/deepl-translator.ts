@@ -23,6 +23,11 @@ export async function translateText(
   config: DeepLConfig, 
   sourceLang?: string
 ): Promise<string> {
+  // Check if API key is available
+  if (!config.apiKey) {
+    throw new Error('DeepL API key is required. Please provide it in the configuration file or set the D18N_DEEPL_API_KEY environment variable.');
+  }
+
   const requestBody: Record<string, unknown> = {
     text: [text],
     target_lang: targetLang.toUpperCase(),
@@ -65,6 +70,11 @@ export async function batchTranslate(
 ): Promise<string[]> {
   if (texts.length === 0) {
     return [];
+  }
+  
+  // Check if API key is available
+  if (!config.apiKey) {
+    throw new Error('DeepL API key is required. Please provide it in the configuration file or set the D18N_DEEPL_API_KEY environment variable.');
   }
   
   const requestBody: Record<string, unknown> = {

@@ -298,15 +298,23 @@ async function translateWithDeepL(
     );
   }
 
-  if (!config.deepL.apiKey) {
+  // Check if API key is available (either in config or environment variable)
+  const apiKey = config.deepL.apiKey ?? process.env.D18N_DEEPL_API_KEY;
+  if (!apiKey) {
     throw new Error(
-      `DeepL API key not configured. Please add "deepL.apiKey" to your ${DEFAULT_CONFIG_FILE_NAME}`
+      `DeepL API key not configured. Please add "deepL.apiKey" to your ${DEFAULT_CONFIG_FILE_NAME} or set the D18N_DEEPL_API_KEY environment variable.`
     );
   }
 
+  // Create config with resolved API key
+  const deepLConfig = {
+    ...config.deepL,
+    apiKey
+  };
+
   // Use the shared utility
   try {
-    return await translateText(text, targetLang, config.deepL, sourceLang);
+    return await translateText(text, targetLang, deepLConfig, sourceLang);
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Translation failed: ${error.message}`);
@@ -993,7 +1001,11 @@ async function handleExtractTranslation(
 
   // Ask for paste format
   const pasteFormat = await vscode.window.showQuickPick(
-    [`${moduleAlias}.${key}()`, `{${moduleAlias}.${key}()}`],
+    [
+      `${moduleAlias}.${key}()`,
+      `{${moduleAlias}.${key}()}`,
+      `$\{${moduleAlias}.${key}()}`,
+    ],
     {
       placeHolder: "Select the paste format",
     }
