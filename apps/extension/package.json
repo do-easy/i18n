@@ -2,7 +2,7 @@
   "name": "do-easy-i18n",
   "displayName": "Do Easy I18n - Internationalization Manager",
   "description": "🚀 Complete i18n solution with inline translations, AI-powered DeepL integration, and TypeScript support. Visualize, edit, and translate your app messages directly in VS Code.",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "publisher": "do-easy",
   "license": "MIT",
   "author": {
@@ -105,6 +105,16 @@
           "type": "number",
           "default": 300,
           "description": "Delay in milliseconds before updating decorations after text changes"
+        },
+        "do-easy-i18n.deepL.apiKey": {
+          "type": "string",
+          "description": "Your DeepL API key for automatic translations",
+          "default": ""
+        },
+        "do-easy-i18n.deepL.host": {
+          "type": "string",
+          "description": "Your DeepL API host",
+          "default": "https://api-free.deepl.com"
         }
       }
     }

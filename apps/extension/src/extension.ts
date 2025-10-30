@@ -351,17 +351,28 @@ async function translateWithDeepL(
     );
   }
 
-  // Check if API key is available (either in config or environment variable)
-  const apiKey = config.deepL.apiKey ?? process.env.D18N_DEEPL_API_KEY;
+  // Check if API key is available (either in config or VSCode settings)
+  const settings = vscode.workspace.getConfiguration('do-easy-i18n');
+  const apiKey = config.deepL.apiKey ?? settings.get('deepL.apiKey');
+  
   if (!apiKey) {
     throw new Error(
-      `DeepL API key not configured. Please add "deepL.apiKey" to your ${DEFAULT_CONFIG_FILE_NAME} or set the D18N_DEEPL_API_KEY environment variable.`
+      `DeepL API key not configured. Please add "deepL.apiKey" to your ${DEFAULT_CONFIG_FILE_NAME} or set it in VSCode settings.`
+    );
+  }
+
+  const host = config.deepL.host ?? settings.get('deepL.host');
+
+  if (!host) {
+    throw new Error(
+      `DeepL host not configured. Please add "deepL.host" to your ${DEFAULT_CONFIG_FILE_NAME} or set it in VSCode settings.`
     );
   }
 
   // Create config with resolved API key
   const deepLConfig = {
     ...config.deepL,
+    host,
     apiKey
   };
 
