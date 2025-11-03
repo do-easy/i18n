@@ -24,6 +24,7 @@
 - 🔄 **Auto-compilation**: Watch for changes and recompile automatically
 - 🌐 **AI Translation**: Automatically translate missing strings with DeepL integration
 - 🧩 **TypeScript Support**: Built with and for TypeScript projects
+- 📦 **Built for monorepo projects**: Built for monorepo projects with any package manager.
 
 ### VSCode Extension
 
@@ -60,7 +61,7 @@ do-easy-i18n init
 
 This creates:
 
-- A `do-easy-i18n.json` configuration file
+- A `do-easy-i18n.config.json` configuration file
 - A `messages` directory with an empty `en.json` file
 
 ### Compile messages (CLI)
@@ -70,7 +71,7 @@ This creates:
 do-easy-i18n compile
 
 # With custom config and output paths
-do-easy-i18n compile --config ./custom-config.json --output ./custom-output
+do-easy-i18n compile --config ./custom-config.json --output ./custom-output-folder
 
 # Watch mode for automatic recompilation
 do-easy-i18n compile --watch
@@ -88,7 +89,7 @@ do-easy-i18n translate --config ./custom-config.json
 
 ### Configuration (CLI)
 
-The configuration file (`do-easy-i18n.json`) has the following structure:
+The configuration file (`do-easy-i18n.config.json`) has the following structure:
 
 ```json
 {
@@ -109,11 +110,13 @@ The configuration file (`do-easy-i18n.json`) has the following structure:
 | `deepL.host`      | DeepL API host (free or pro)                  |
 | `deepL.apiKey`    | Your DeepL API key for automatic translations |
 
+**Note**: The `deepL.apiKey` is optional. If not provided in the configuration file, the tool will look for the `D18N_DEEPL_API_KEY` environment variable. For VSCode extension, it can be provided in the extension settings.
+
 ## Usage (VSCode Extension)
 
 1. Open your project folder.
 
-2. Ensure that you have a `do-easy-i18n.json` configuration file in your project.
+2. Ensure that you have a `do-easy-i18n.config.json` configuration file in your project.
 
 3. Import a translation using the pattern `import * as`.
 
@@ -127,15 +130,15 @@ You can switch the decoration language in the status bar.
 
 ### Decoration colors
 
-- Green color: Translation is present in all languages in the do-easy-i18n.json languages array.
+- Green color: Translation for `hello` key is present in messages/[lang].json files.
 
 ![Green color example](/docs/green-example.png)
 
-- Yellow color: Translation is present in some languages in the do-easy-i18n.json languages array.
+- Yellow color: Translation is missing for some languages in messages/[lang].json file.
 
 ![Yellow color example](/docs/yellow-example.png)
 
-- Red color: Translation is missing in all languages in the do-easy-i18n.json languages array.
+- Red color: Translation is missing for the selected language in VSCode status bar.
 
 ![Red color example](/docs/red-example.png)
 
@@ -147,19 +150,25 @@ With the extension, you can:
 
 ![Code actions example](/docs/code-actions-add-example.gif)
 
+Automatically create a key with the selected text in messages/[lang].json file.
+
 - Edit a translation key:
 
 ![Code actions example](/docs/code-actions-edit-example.gif)
+
+Automatically edit the translation for the selected key in messages/[lang].json file.
 
 - Delete a translation key:
 
 ![Code actions example](/docs/code-actions-delete-example.gif)
 
+Automatically delete the translation key for the selected language in messages/[lang].json file.
+
 - Translate a missing translation key using DeepL:
 
 ![Code actions example](/docs/code-actions-translate-example.gif)
 
-- The extension will use the `defaultLanguage` to translate missing translations. If the default language has no source translation, the extension will fallback to the first language in the `languages` array.
+- The extension will try to use the `defaultLanguage` to translate missing translations. If a source translation is missing, the extension will fallback to the first one available with same key.
 
 ## License
 

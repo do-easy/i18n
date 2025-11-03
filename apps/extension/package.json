@@ -2,7 +2,7 @@
   "name": "do-easy-i18n",
   "displayName": "Do Easy I18n - Internationalization Manager",
   "description": "🚀 Complete i18n solution with inline translations, AI-powered DeepL integration, and TypeScript support. Visualize, edit, and translate your app messages directly in VS Code.",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "publisher": "do-easy",
   "license": "MIT",
   "author": {
